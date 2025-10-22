@@ -1,152 +1,112 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulasi Vending Machine</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f1f1f1;
-        margin: 0;
-        padding: 0;
-    }
-    .container {
-        max-width: 420px;
-        background: white;
-        margin: 40px auto;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    h2 {
-        text-align: center;
-        margin-bottom: 15px;
-    }
-    .product {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-    button {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        background: #0078D7;
-        color: white;
-        transition: 0.2s;
-    }
-    button:hover {
-        background: #005fa3;
-    }
-    #console {
-        background: #222;
-        color: #0f0;
-        padding: 10px;
-        font-family: monospace;
-        border-radius: 8px;
-        margin-top: 15px;
-        height: 150px;
-        overflow-y: auto;
-        white-space: pre-line;
-    }
-    input[type="number"] {
-        width: 100%;
-        padding: 6px;
-        margin-top: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vending Machine - Tugas Berkom</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <h2>Vending Machine</h2>
-    <div id="productList"></div>
-    <div id="inputSection" style="display:none;">
-        <p id="selectedProduct"></p>
-        <label>Masukkan uang (Rp):</label>
-        <input type="number" id="uangInput" min="0" placeholder="Contoh: 5000">
-        <button onclick="masukkanUang()">Masukkan</button>
-    </div>
-    <div id="console"></div>
-</div>
+  <div class="container">
+    <header>
+      <h1>Vending Machine</h1>
+      <p class="subtitle">Tugas Besar Komunikasi Data</p>
+    </header>
 
-<script>
+    <main>
+      <section id="productList"></section>
+
+      <section id="inputSection" class="hidden">
+        <p id="selectedProduct"></p>
+        <label for="uangInput">Masukkan uang (Rp):</label>
+        <input type="number" id="uangInput" min="0" placeholder="Contoh: 5000">
+        <button id="btnMasukkan" onclick="masukkanUang()">Masukkan</button>
+      </section>
+
+      <div id="console" class="console"></div>
+    </main>
+  </div>
+
+  <script>
     const products = {
-        1: { name: "Cola", price: 5000, stock: 5 },
-        2: { name: "Air Mineral", price: 3000, stock: 10 },
-        3: { name: "Cokelat", price: 8000, stock: 3 },
-        4: { name: "Keripik", price: 6000, stock: 7 }
+      1: { name: "Cola", price: 5000, stock: 5 },
+      2: { name: "Air Mineral", price: 3000, stock: 10 },
+      3: { name: "Cokelat", price: 8000, stock: 3 },
+      4: { name: "Keripik", price: 6000, stock: 7 }
     };
+
     let uangMasuk = 0;
     let selected = null;
     const logBox = document.getElementById("console");
 
     function tampilkanProduk() {
-        const list = document.getElementById("productList");
-        list.innerHTML = "";
-        for (let id in products) {
-            const p = products[id];
-            const div = document.createElement("div");
-            div.className = "product";
-            div.innerHTML = `
-                <b>${p.name}</b><br>
-                Harga: Rp${p.price}<br>
-                Stok: ${p.stock}<br>
-                <button onclick="pilihProduk(${id})">Pilih</button>
-            `;
-            list.appendChild(div);
-        }
+      const list = document.getElementById("productList");
+      list.innerHTML = "";
+      for (let id in products) {
+        const p = products[id];
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <div class="product-info">
+            <div>
+              <h3>${p.name}</h3>
+              <p>Rp${p.price.toLocaleString()}</p>
+              <p class="stock">Stok: ${p.stock}</p>
+            </div>
+            <button class="btn" onclick="pilihProduk(${id})">Pilih</button>
+          </div>
+        `;
+        list.appendChild(div);
+      }
     }
 
     function log(msg) {
-        logBox.textContent += msg + "\n";
-        logBox.scrollTop = logBox.scrollHeight;
+      logBox.textContent += msg + "\n";
+      logBox.scrollTop = logBox.scrollHeight;
     }
 
     function pilihProduk(id) {
-        const p = products[id];
-        if (p.stock <= 0) {
-            log(`Stok ${p.name} habis.`);
-            return;
-        }
-        selected = p;
-        uangMasuk = 0;
-        document.getElementById("inputSection").style.display = "block";
-        document.getElementById("selectedProduct").textContent = 
-            `Produk dipilih: ${p.name} - Harga Rp${p.price}`;
-        log(`Anda memilih ${p.name}. Masukkan uang.`);
+      const p = products[id];
+      if (p.stock <= 0) {
+        log(`❌ Stok ${p.name} habis.`);
+        return;
+      }
+      selected = p;
+      uangMasuk = 0;
+      document.getElementById("inputSection").classList.remove("hidden");
+      document.getElementById("selectedProduct").textContent =
+        `Produk dipilih: ${p.name} - Harga Rp${p.price.toLocaleString()}`;
+      log(`🛒 Anda memilih ${p.name}. Masukkan uang.`);
     }
 
     function masukkanUang() {
-        const input = document.getElementById("uangInput");
-        let uang = parseInt(input.value);
-        if (isNaN(uang) || uang <= 0) {
-            log("Nominal uang tidak valid.");
-            return;
-        }
-        uangMasuk += uang;
-        log(`Total uang dimasukkan: Rp${uangMasuk}`);
-        if (uangMasuk < selected.price) {
-            log(`Uang kurang Rp${selected.price - uangMasuk}.`);
-        } else {
-            const kembalian = uangMasuk - selected.price;
-            selected.stock -= 1;
-            log(`Produk ${selected.name} telah keluar.`);
-            if (kembalian > 0) log(`Kembalian Anda: Rp${kembalian}`);
-            log("Terima kasih!");
-            uangMasuk = 0;
-            document.getElementById("inputSection").style.display = "none";
-            tampilkanProduk();
-        }
-        input.value = "";
+      const input = document.getElementById("uangInput");
+      const uang = parseInt(input.value);
+      if (isNaN(uang) || uang <= 0) {
+        log("⚠️ Nominal uang tidak valid.");
+        return;
+      }
+
+      uangMasuk += uang;
+      log(`💰 Total uang dimasukkan: Rp${uangMasuk.toLocaleString()}`);
+
+      if (uangMasuk < selected.price) {
+        log(`🔹 Uang kurang Rp${(selected.price - uangMasuk).toLocaleString()}.`);
+      } else {
+        const kembalian = uangMasuk - selected.price;
+        selected.stock -= 1;
+        log(`✅ Produk ${selected.name} telah keluar.`);
+        if (kembalian > 0) log(`🔸 Kembalian Anda: Rp${kembalian.toLocaleString()}`);
+        log("Terima kasih telah bertransaksi.\n");
+        uangMasuk = 0;
+        document.getElementById("inputSection").classList.add("hidden");
+        tampilkanProduk();
+      }
+      input.value = "";
     }
 
     tampilkanProduk();
     log("Selamat datang di Vending Machine!");
-</script>
+  </script>
 </body>
 </html>
